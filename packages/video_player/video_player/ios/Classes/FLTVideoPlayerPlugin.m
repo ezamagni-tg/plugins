@@ -177,8 +177,8 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     AVURLAsset* asset = [AVURLAsset URLAssetWithURL:url
                                             options:@{@"AVURLAssetHTTPHeaderFieldsKey" : headers}];
     item = [AVPlayerItem playerItemWithAsset:asset];
-    item.preferredPeakBitRate = bitrate;
   }
+  item.preferredPeakBitRate = bitrate;
   return [self initWithPlayerItem:item frameUpdater:frameUpdater];
 }
 

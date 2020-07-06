@@ -171,6 +171,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       {this.package, this.closedCaptionFile})
       : dataSourceType = DataSourceType.asset,
         formatHint = null,
+        cookieValue = null,
+        preferredBitrate = 0,
         super(VideoPlayerValue(duration: null));
 
   /// Constructs a [VideoPlayerController] playing a video from obtained from
@@ -181,7 +183,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// **Android only**: The [formatHint] option allows the caller to override
   /// the video format detection code.
   VideoPlayerController.network(this.dataSource,
-      {this.formatHint, this.closedCaptionFile})
+      {this.formatHint, this.closedCaptionFile,
+      this.cookieValue, this.preferredBitrate = 0})
       : dataSourceType = DataSourceType.network,
         package = null,
         super(VideoPlayerValue(duration: null));
@@ -195,6 +198,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         dataSourceType = DataSourceType.file,
         package = null,
         formatHint = null,
+        cookieValue = null,
+        preferredBitrate = 0,
         super(VideoPlayerValue(duration: null));
 
   int _textureId;
@@ -210,6 +215,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// Describes the type of data source this [VideoPlayerController]
   /// is constructed with.
   final DataSourceType dataSourceType;
+
+  /// Http headers while building [dataSource] from networks
+  final String cookieValue;
+
+  /// Http cookie header value to use while fetching [dataSource] from networks
+  final int preferredBitrate;
 
   /// Only set for [asset] videos. The package that the asset was loaded from.
   final String package;
@@ -253,6 +264,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           sourceType: DataSourceType.network,
           uri: dataSource,
           formatHint: formatHint,
+          cookieValue: cookieValue,
+          preferredBitrate: preferredBitrate,
         );
         break;
       case DataSourceType.file:

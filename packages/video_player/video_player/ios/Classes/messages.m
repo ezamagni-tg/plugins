@@ -76,16 +76,26 @@ static NSDictionary *wrapResult(NSDictionary *result, FlutterError *error) {
   if ((NSNull *)result.formatHint == [NSNull null]) {
     result.formatHint = nil;
   }
+  result.cookieValue = dict[@"cookieValue"];
+  if ((NSNull *)result.cookieValue == [NSNull null]) {
+    result.cookieValue = nil;
+  }
+  result.preferredBitrate = dict[@"preferredBitrate"];
+  if ((NSNull *)result.preferredBitrate == [NSNull null]) {
+    result.preferredBitrate = nil;
+  }
   return result;
 }
 - (NSDictionary *)toMap {
   return [NSDictionary
       dictionaryWithObjectsAndKeys:(self.asset ? self.asset : [NSNull null]), @"asset",
                                    (self.uri ? self.uri : [NSNull null]), @"uri",
-                                   (self.packageName != nil ? self.packageName : [NSNull null]),
-                                   @"packageName",
-                                   (self.formatHint != nil ? self.formatHint : [NSNull null]),
-                                   @"formatHint", nil];
+                                   (self.packageName != nil ? self.packageName : [NSNull null]), @"packageName",
+                                   (self.formatHint != nil ? self.formatHint : [NSNull null]), @"formatHint", 
+                                   (self.cookieValue != nil ? self.cookieValue : [NSNull null]), @"cookieValue",
+                                   (self.preferredBitrate != nil ? self.preferredBitrate : [NSNull null]), @"preferredBitrate",
+                                   nil
+                                   ];
 }
 @end
 

@@ -141,6 +141,8 @@ class DataSource {
     this.formatHint,
     this.asset,
     this.package,
+    this.cookieValue,
+    this.preferredBitrate,
   });
 
   /// The way in which the video was originally loaded.
@@ -165,6 +167,12 @@ class DataSource {
   /// The package that the asset was loaded from. Only set for
   /// [DataSourceType.asset] videos.
   final String package;
+
+  /// Http cookie header value to use while fetching [dataSource] from networks
+  final String cookieValue;
+
+  /// The preferred maximum bitrate for the video. 0 means no bitrate constraint must be applied.
+  final int preferredBitrate;
 }
 
 /// The way in which the video was originally loaded.

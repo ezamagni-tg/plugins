@@ -46,7 +46,10 @@ int64_t FLTCMTimeToMillis(CMTime time) {
 @property(nonatomic, readonly) bool isPlaying;
 @property(nonatomic) bool isLooping;
 @property(nonatomic, readonly) bool isInitialized;
-- (instancetype)initWithURL:(NSURL*)url frameUpdater:(FLTFrameUpdater*)frameUpdater;
+- (instancetype)initWithURL:(NSURL*)url
+               frameUpdater:(FLTFrameUpdater*)frameUpdater
+                    headers:(NSDictionary*)headers
+           preferredBitrate:(int)bitrate;
 - (void)play;
 - (void)pause;
 - (void)setIsLooping:(bool)isLooping;
@@ -62,7 +65,7 @@ static void* playbackBufferFullContext = &playbackBufferFullContext;
 @implementation FLTVideoPlayer
 - (instancetype)initWithAsset:(NSString*)asset frameUpdater:(FLTFrameUpdater*)frameUpdater {
   NSString* path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
-  return [self initWithURL:[NSURL fileURLWithPath:path] frameUpdater:frameUpdater];
+  return [self initWithURL:[NSURL fileURLWithPath:path] frameUpdater:frameUpdater headers:nil preferredBitrate:0];
 }
 
 - (void)addObservers:(AVPlayerItem*)item {
@@ -162,8 +165,20 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   _displayLink.paused = YES;
 }
 
-- (instancetype)initWithURL:(NSURL*)url frameUpdater:(FLTFrameUpdater*)frameUpdater {
-  AVPlayerItem* item = [AVPlayerItem playerItemWithURL:url];
+- (instancetype)initWithURL:(NSURL*)url
+               frameUpdater:(FLTFrameUpdater*)frameUpdater
+                    headers:(NSDictionary*)headers
+           preferredBitrate: (int) bitrate {
+
+  AVPlayerItem* item;
+  if (headers == (id)[NSNull null] || headers == nil) {
+    item = [AVPlayerItem playerItemWithURL:url];
+  } else {
+    AVURLAsset* asset = [AVURLAsset URLAssetWithURL:url
+                                            options:@{@"AVURLAssetHTTPHeaderFieldsKey" : headers}];
+    item = [AVPlayerItem playerItemWithAsset:asset];
+    item.preferredPeakBitRate = bitrate;
+  }
   return [self initWithPlayerItem:item frameUpdater:frameUpdater];
 }
 
@@ -497,8 +512,14 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     player = [[FLTVideoPlayer alloc] initWithAsset:assetPath frameUpdater:frameUpdater];
     return [self onPlayerSetup:player frameUpdater:frameUpdater];
   } else if (input.uri) {
-    player = [[FLTVideoPlayer alloc] initWithURL:[NSURL URLWithString:input.uri]
-                                    frameUpdater:frameUpdater];
+    NSDictionary* headers = nil;
+    if (input.cookieValue) {
+      headers = [[NSDictionary alloc] initWithObjectsAndKeys:cookieValue, @"Cookie", nil];
+    }
+    player = [[FLTVideoPlayer alloc] initWithURL:[NSURL URLWithString:uriString]
+                                      frameUpdater:frameUpdater
+                                           headers:headers
+                                  preferredBitrate:input.bitrate];
     return [self onPlayerSetup:player frameUpdater:frameUpdater];
   } else {
     *error = [FlutterError errorWithCode:@"video_player" message:@"not implemented" details:nil];

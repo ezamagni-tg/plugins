@@ -81,12 +81,34 @@ public class Messages {
       this.formatHint = setterArg;
     }
 
+    private String cookieValue;
+
+    public String getCookieValue() {
+      return cookieValue;
+    }
+
+    public void setCookieValue(String setterArg) {
+      this.cookieValue = setterArg;
+    }
+
+    private int preferredBitrate;
+
+    public int getPreferredBitrate() {
+      return preferredBitrate;
+    }
+
+    public void setPreferredBitrate(int setterArg) {
+      this.preferredBitrate = setterArg;
+    }
+
     HashMap toMap() {
       HashMap<String, Object> toMapResult = new HashMap<String, Object>();
       toMapResult.put("asset", asset);
       toMapResult.put("uri", uri);
       toMapResult.put("packageName", packageName);
       toMapResult.put("formatHint", formatHint);
+      toMapResult.put("cookieValue", cookieValue);
+      toMapResult.put("preferredBitrate", preferredBitrate);
       return toMapResult;
     }
 
@@ -96,6 +118,8 @@ public class Messages {
       fromMapResult.uri = (String) map.get("uri");
       fromMapResult.packageName = (String) map.get("packageName");
       fromMapResult.formatHint = (String) map.get("formatHint");
+      fromMapResult.cookieValue = (String) map.get("cookieValue");
+      fromMapResult.preferredBitrate = (int) map.get("preferredBitrate");
       return fromMapResult;
     }
   }

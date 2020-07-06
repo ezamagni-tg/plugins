@@ -24,6 +24,8 @@ class CreateMessage {
   String uri;
   String packageName;
   String formatHint;
+  String cookieValue;
+  int preferredBitrate;
 }
 
 @HostApi()

@@ -514,12 +514,12 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   } else if (input.uri) {
     NSDictionary* headers = nil;
     if (input.cookieValue) {
-      headers = [[NSDictionary alloc] initWithObjectsAndKeys:cookieValue, @"Cookie", nil];
+      headers = [[NSDictionary alloc] initWithObjectsAndKeys:input.cookieValue, @"Cookie", nil];
     }
     player = [[FLTVideoPlayer alloc] initWithURL:[NSURL URLWithString:uriString]
                                       frameUpdater:frameUpdater
                                            headers:headers
-                                  preferredBitrate:input.bitrate];
+                                  preferredBitrate:input.preferredBitrate];
     return [self onPlayerSetup:player frameUpdater:frameUpdater];
   } else {
     *error = [FlutterError errorWithCode:@"video_player" message:@"not implemented" details:nil];

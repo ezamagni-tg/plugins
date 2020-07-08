@@ -516,7 +516,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     if (input.cookieValue) {
       headers = [[NSDictionary alloc] initWithObjectsAndKeys:input.cookieValue, @"Cookie", nil];
     }
-    player = [[FLTVideoPlayer alloc] initWithURL:[NSURL URLWithString:uriString]
+    player = [[FLTVideoPlayer alloc] initWithURL:[NSURL URLWithString:input.uri]
                                       frameUpdater:frameUpdater
                                            headers:headers
                                   preferredBitrate:input.preferredBitrate];

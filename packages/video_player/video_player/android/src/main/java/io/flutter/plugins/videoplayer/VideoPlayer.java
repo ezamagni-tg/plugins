@@ -61,26 +61,35 @@ final class VideoPlayer {
       EventChannel eventChannel,
       TextureRegistry.SurfaceTextureEntry textureEntry,
       String dataSource,
-      String formatHint) {
+      String formatHint,
+      String cookieValue,
+      String preferredBitrate) {
     this.eventChannel = eventChannel;
     this.textureEntry = textureEntry;
 
-    TrackSelector trackSelector = new DefaultTrackSelector();
-    exoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector);
+    TrackSelector trackSelector = new DefaultTrackSelector(context, new AdaptiveTrackSelection.Factory());
+    DefaultTrackSelector.ParametersBuilder params = new DefaultTrackSelector.ParametersBuilder(context);
+    trackSelector.setParameters(params.setMaxVideoBitrate(Integer.parseInt(preferredBitrate)).build());
+    exoPlayer = new SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build();
 
     Uri uri = Uri.parse(dataSource);
 
     DataSource.Factory dataSourceFactory;
     if (isHTTP(uri)) {
-      dataSourceFactory =
-          new DefaultHttpDataSourceFactory(
-              "ExoPlayer",
+      DefaultHttpDataSourceFactory httpDataSourceFactory = new DefaultHttpDataSourceFactory(
+              "XYZPLAYER",
               null,
               DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
               DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
               true);
+      httpDataSourceFactory.setDefaultRequestProperty("Cookie", cookieValue);
+      MediaSource mediaSource = buildMediaSource(uri, httpDataSourceFactory, formatHint, context);
+      exoPlayer.prepare(mediaSource);
     } else {
+      DataSource.Factory dataSourceFactory;
       dataSourceFactory = new DefaultDataSourceFactory(context, "ExoPlayer");
+      MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint, context);
+      exoPlayer.prepare(mediaSource);
     }
 
     MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint, context);

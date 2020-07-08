@@ -122,7 +122,9 @@ public class VideoPlayerPlugin implements FlutterPlugin, VideoPlayerApi {
               eventChannel,
               handle,
               arg.getUri(),
-              arg.getFormatHint());
+              arg.getFormatHint(),
+              arg.getCookieValue(),
+              arg.getPreferredBitrate());
       videoPlayers.put(handle.id(), player);
     }
 

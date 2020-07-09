@@ -23,6 +23,7 @@ import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
@@ -69,8 +70,10 @@ final class VideoPlayer {
 
     TrackSelector trackSelector = new DefaultTrackSelector(context, new AdaptiveTrackSelection.Factory());
     DefaultTrackSelector.ParametersBuilder params = new DefaultTrackSelector.ParametersBuilder(context);
-    trackSelector.setParameters(params.setMaxVideoBitrate(Integer.parseInt(preferredBitrate)).build());
-    exoPlayer = new SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build();
+    trackSelector.setParameters(params.setMaxVideoBitrate(preferredBitrate).build());
+    exoPlayer = new SimpleExoPlayer.Builder(context)
+      .setTrackSelector(trackSelector)
+      .build();
 
     Uri uri = Uri.parse(dataSource);
 
@@ -83,13 +86,9 @@ final class VideoPlayer {
               DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
               true);
       httpDataSourceFactory.setDefaultRequestProperty("Cookie", cookieValue);
-      MediaSource mediaSource = buildMediaSource(uri, httpDataSourceFactory, formatHint, context);
-      exoPlayer.prepare(mediaSource);
+      dataSourceFactory = httpDataSourceFactory;
     } else {
-      DataSource.Factory dataSourceFactory;
       dataSourceFactory = new DefaultDataSourceFactory(context, "ExoPlayer");
-      MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint, context);
-      exoPlayer.prepare(mediaSource);
     }
 
     MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint, context);

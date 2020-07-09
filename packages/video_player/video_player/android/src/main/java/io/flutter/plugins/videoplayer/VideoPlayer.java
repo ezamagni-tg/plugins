@@ -64,16 +64,14 @@ final class VideoPlayer {
       String dataSource,
       String formatHint,
       String cookieValue,
-      String preferredBitrate) {
+      int preferredBitrate) {
     this.eventChannel = eventChannel;
     this.textureEntry = textureEntry;
 
-    TrackSelector trackSelector = new DefaultTrackSelector(context, new AdaptiveTrackSelection.Factory());
-    DefaultTrackSelector.ParametersBuilder params = new DefaultTrackSelector.ParametersBuilder(context);
+    DefaultTrackSelector trackSelector = new DefaultTrackSelector(new AdaptiveTrackSelection.Factory());
+    DefaultTrackSelector.ParametersBuilder params = new DefaultTrackSelector.ParametersBuilder();
     trackSelector.setParameters(params.setMaxVideoBitrate(preferredBitrate).build());
-    exoPlayer = new SimpleExoPlayer.Builder(context)
-      .setTrackSelector(trackSelector)
-      .build();
+    exoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector);
 
     Uri uri = Uri.parse(dataSource);
 

@@ -113,7 +113,9 @@ public class VideoPlayerPlugin implements FlutterPlugin, VideoPlayerApi {
               eventChannel,
               handle,
               "asset:///" + assetLookupKey,
-              null);
+              null,
+                  null,
+                  Integer.MAX_VALUE);
       videoPlayers.put(handle.id(), player);
     } else {
       player =

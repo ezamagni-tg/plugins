@@ -6,6 +6,7 @@ import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
 import android.view.Surface;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -134,18 +135,22 @@ final class VideoPlayer {
     }
     switch (type) {
       case C.TYPE_SS:
+        Log.i("stream type", "TYPE_SS");
         return new SsMediaSource.Factory(
                 new DefaultSsChunkSource.Factory(mediaDataSourceFactory),
                 new DefaultDataSourceFactory(context, null, mediaDataSourceFactory))
             .createMediaSource(uri);
       case C.TYPE_DASH:
+        Log.i("stream type", "TYPE_DASH");
         return new DashMediaSource.Factory(
                 new DefaultDashChunkSource.Factory(mediaDataSourceFactory),
                 new DefaultDataSourceFactory(context, null, mediaDataSourceFactory))
             .createMediaSource(uri);
       case C.TYPE_HLS:
+        Log.i("stream type", "TYPE_HLS");
         return new HlsMediaSource.Factory(mediaDataSourceFactory).createMediaSource(uri);
       case C.TYPE_OTHER:
+        Log.i("stream type", "TYPE_OTHER");
         return new ExtractorMediaSource.Factory(mediaDataSourceFactory)
             .setExtractorsFactory(new DefaultExtractorsFactory())
             .createMediaSource(uri);

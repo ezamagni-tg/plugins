@@ -40,6 +40,9 @@ import java.util.List;
 import java.util.Map;
 
 final class VideoPlayer {
+  private static final int minDurationForQualityIncreaseMs = 1000;
+  private static final int minDurationForQualityDecreaseMs = 2000;
+  private static final int minDurationToRetainAfterDiscardMs = 2000;
   private static final String FORMAT_SS = "ss";
   private static final String FORMAT_DASH = "dash";
   private static final String FORMAT_HLS = "hls";
@@ -68,9 +71,11 @@ final class VideoPlayer {
     this.eventChannel = eventChannel;
     this.textureEntry = textureEntry;
 
-    DefaultTrackSelector trackSelector = new DefaultTrackSelector(new AdaptiveTrackSelection.Factory());
-    DefaultTrackSelector.ParametersBuilder params = new DefaultTrackSelector.ParametersBuilder();
-    trackSelector.setParameters(params.setMaxVideoBitrate(preferredBitrate).build());
+    float bandwithFraction = .8f;
+    AdaptiveTrackSelection.Factory trackSelectionFactory = new AdaptiveTrackSelection.Factory(minDurationForQualityIncreaseMs, minDurationForQualityDecreaseMs, minDurationToRetainAfterDiscardMs, bandwithFraction);
+    DefaultTrackSelector trackSelector = new DefaultTrackSelector(trackSelectionFactory);
+//    DefaultTrackSelector.ParametersBuilder params = new DefaultTrackSelector.ParametersBuilder();
+//    trackSelector.setParameters(params.setMaxVideoBitrate(preferredBitrate).build());
     exoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector);
 
     Uri uri = Uri.parse(dataSource);
